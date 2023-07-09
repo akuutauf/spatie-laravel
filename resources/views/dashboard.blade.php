@@ -14,7 +14,33 @@
                             </div>
                         @endif
 
-                        {{ __('You are logged in!') }}
+                        {{ __('Welome Admin, this is your personal account information!') }} <br>
+
+                        @if ($user_roles->contains('administrator'))
+                            You are logged in as Administrator
+                        @endif
+
+                        <hr>
+                        Here your permit list (Number of Permissions: {{ $user_permissions_count }})
+                        @if ($user_permissions)
+                            <ol>
+                                @foreach ($user_permissions as $permission)
+                                    <li>
+                                        {{ $permission }} -
+
+                                        @if ($permission == 'manage permit')
+                                            @can('manage permit')
+                                                <a href="">Manage Permission User</a> <br>
+                                            @endcan
+                                        @endif
+                                    </li>
+                                @endforeach
+                            </ol>
+                        @else
+                            <br>
+                            *You don't have any permissions <br><br>
+                        @endif
+
                     </div>
                 </div>
             </div>

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -21,13 +21,53 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
+    // for users (creators, editors, and users)
     public function index()
     {
-        return view('home');
+        $user = Auth::user();
+        $user_roles = $user->roles->pluck('name');
+
+        // user permissions
+        $user_permissions = $user->roles->flatMap(function ($role) {
+            return $role->permissions->pluck('name');
+        })->toArray();
+
+        // user permission count
+        $user_permissions_count = $user->roles->flatMap(function ($role) {
+            return $role->permissions;
+        })->unique('id')->count();
+
+        $data = [
+            'user_roles' => $user_roles,
+            'user_permissions' => $user_permissions,
+            'user_permissions_count' => $user_permissions_count,
+        ];
+
+        return view('home', $data);
     }
 
+    // for admininistrator users
     public function dashboard()
     {
-        return view('dashboard');
+        $user = Auth::user();
+        $user_roles = $user->roles->pluck('name');
+
+        // user permissions
+        $user_permissions = $user->roles->flatMap(function ($role) {
+            return $role->permissions->pluck('name');
+        })->toArray();
+
+        // user permission count
+        $user_permissions_count = $user->roles->flatMap(function ($role) {
+            return $role->permissions;
+        })->unique('id')->count();
+
+        $data = [
+            'user_roles' => $user_roles,
+            'user_permissions' => $user_permissions,
+            'user_permissions_count' => $user_permissions_count,
+        ];
+
+        return view('dashboard', $data);
     }
 }
